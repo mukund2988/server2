@@ -30,7 +30,6 @@ const User = require('./models/user');  // Adjust the path if needed
 app.post('/register', (req, res) => {
   const { firstName, middleName, lastName, mobile, gmail, address, workArea, area, shopName } = req.body;
 
-  // Create a new user object
   const newUser = new User({
     firstName,
     middleName,
@@ -39,11 +38,10 @@ app.post('/register', (req, res) => {
     gmail,
     address,
     workArea,
-    area: area || [],
+    area: area || [],  // Ensure area is an array
     shopName,
   });
 
-  // Save the user to the MongoDB database
   newUser.save()
     .then(() => {
       res.send('<h2>Registration Successful!</h2><p>Your registration has been completed successfully.</p><a href="/">Go to Home</a>');
@@ -53,6 +51,7 @@ app.post('/register', (req, res) => {
       res.status(500).send('<h2>Error!</h2><p>Something went wrong. Please try again later.</p>');
     });
 });
+
 
 // Endpoint to fetch all users from the "instint_data" collection
 app.get('/users', async (req, res) => {
