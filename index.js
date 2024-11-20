@@ -60,9 +60,9 @@ app.get('/users', async (req, res) => {
   }
 });
 
-// Serve static files
-app.use(express.static('publicc'));
-
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'publicc', 'index.html')); // Serve the index.html from 'publicc'
+});
 // Start the server
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
