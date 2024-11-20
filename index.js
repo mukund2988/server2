@@ -27,7 +27,7 @@ mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .catch((error) => console.error('MongoDB connection error:', error));
 
 // Import the User model
-const User = require('../models/user');  // Adjust path as needed
+const User = require('./models/user');  // Adjust path as needed
 
 // Registration route
 app.post('/register', (req, res) => {
