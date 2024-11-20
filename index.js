@@ -1,37 +1,53 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');  // Import the cors package
 
-// Load environment variables
+// Load environment variables from the .env file
 dotenv.config();
 
 // Initialize the Express app
 const app = express();
 
-// Allow requests from https://instint.in (your frontend)
+// Enable CORS for specific frontend origin (security: allow only specific domains)
+const allowedOrigins = ['https://instint.in']; // Frontend domain(s)
 app.use(cors({
-  origin: 'https://instint.in',  // Add the domain of your frontend here
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests from allowed origins
+      callback(null, true);
+    } else {
+      // Reject requests from disallowed origins
+      callback(new Error('CORS not allowed'), false);
+    }
+  },
   methods: ['GET', 'POST'],
   allowedHeaders: ['Content-Type']
 }));
 
-// Set up middleware to parse incoming form data
-app.use(bodyParser.urlencoded({ extended: true }));
+// Set up middleware to parse incoming JSON data (use express built-in middleware)
+app.use(express.json());  // For parsing application/json
 
 // MongoDB connection setup
 const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.error('MongoDB connection error:', error));
+  .catch((error) => {
+    console.error('MongoDB connection error:', error);
+    process.exit(1);  // Exit the process if the database connection fails
+  });
 
-// Import the User model
-const User = require('./models/user');  // Adjust path as needed
+// Import the User model (adjust path as needed)
+const User = require('./models/user');
 
 // Registration route
 app.post('/register', (req, res) => {
   const { firstName, middleName, lastName, mobile, gmail, address, workArea, area, shopName } = req.body;
+
+  // Validate input
+  if (!firstName || !lastName || !mobile || !gmail || !address || !workArea || !shopName) {
+    return res.status(400).send('<h2>Error!</h2><p>All fields are required.</p>');
+  }
 
   // Create a new user object
   const newUser = new User({
@@ -42,7 +58,7 @@ app.post('/register', (req, res) => {
     gmail,
     address,
     workArea,
-    area: area || [],
+    area: area || [],  // Default to empty array if area is not provided
     shopName,
   });
 
