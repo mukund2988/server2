@@ -66,7 +66,7 @@ app.get('/users', async (req, res) => {
 });
 
 // Serve static files (make sure your frontend files are placed in the "publicc" folder)
-app.use(express.static('public'));  // Adjust path if necessary
+app.use(express.static('public_html'));  // Adjust path if necessary
 
 // Start the server
 const PORT = process.env.PORT || 3000;
