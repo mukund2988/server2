@@ -13,19 +13,18 @@ const app = express();
 const allowedOrigins = ['https://instint.in']; // Frontend domain(s)
 app.use(cors({
   origin: (origin, callback) => {
+    // If origin is not present (e.g., from local environment), allow it
     if (!origin || allowedOrigins.includes(origin)) {
-      // Allow requests from allowed origins
       callback(null, true);
     } else {
-      // Reject requests from disallowed origins
       callback(new Error('CORS not allowed'), false);
     }
   },
-  methods: ['GET', 'POST'],
+  methods: ['GET', 'POST', 'OPTIONS'],  // Allow OPTIONS for preflight requests
   allowedHeaders: ['Content-Type']
 }));
 
-// Set up middleware to parse incoming JSON data (use express built-in middleware)
+// Set up middleware to parse incoming JSON data
 app.use(express.json());  // For parsing application/json
 
 // MongoDB connection setup
