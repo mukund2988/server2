@@ -9,24 +9,10 @@ dotenv.config();
 // Initialize the Express app
 const app = express();
 
-// Enable CORS for specific frontend origin (security: allow only specific domains)
-const allowedOrigins = ['https://instint.in']; // Frontend domain(s)
-app.use(cors({
-  origin: (origin, callback) => {
-    // If origin is not present (e.g., from local environment), allow it
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('CORS not allowed'), false);
-    }
-  },
-  methods: ['GET', 'POST', 'OPTIONS'],  // Allow OPTIONS for preflight requests
-  allowedHeaders: ['Content-Type']
-}));
 
 // Set up middleware to parse incoming JSON data
 app.use(express.json());  // For parsing application/json
-
+app.use(cors());
 // MongoDB connection setup
 const MONGO_URI = process.env.MONGO_URI;
 mongoose.connect(MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
